@@ -1,0 +1,12 @@
+robot = new GiantKillerRobot();
+robot.initialize();
+
+robot.EyeLaserIntensity = Intensity.Kill;
+robot.Target = {Animals, Humans, Superheroes}
+
+earth = Planets.Earth
+while (robot.Active && earth.ContainsLife) 
+    if (robot.CurrentTarget.IsAlive)
+        robot.FireLaserAt(robot.CurrentTarget)
+   else
+        robot.AcquireNextTarget();
