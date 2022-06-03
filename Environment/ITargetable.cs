@@ -1,7 +1,14 @@
 namespace Environment;
 public interface ITargetable
 {
-    public uint Health { get; set; }
-    public bool IsAlive { get; }
-    public void TakeDamage(int amount);
+    public uint Resistance { get; set; }
+    public bool IsAlive =>Resistance>0;
+    public void TakeDamage(int amount)
+    {
+        if (amount<0)
+        {
+            throw(new ArgumentOutOfRangeException("damage amount must be positive"));
+        }
+    Resistance-=amount;
+    }
 }

@@ -34,8 +34,8 @@ public class Robot
     }
     public void FireLaserAt(ITargetable Target)
     {
-        Target.TakeDamage(GetDamageFactor());
+        Target.TakeDamage(amount: GetDamageFactor());
     }
 
-    private int GetDamageFactor() => (int)((2 * Size) + (Energy / 20) + (int)(0.15 * CurrentTarget.Health));
+    private int GetDamageFactor() => (int)((2 * Size) + (Energy / 20) + (int)(0.15 * CurrentTarget.Resistance));
 }
