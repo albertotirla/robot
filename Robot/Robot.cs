@@ -1,41 +1,48 @@
-
 using Environment;
 using Status;
 
 namespace Robot;
-public class Robot
+abstract public class Robot
 {
     public Intensity EyeLaserIntensity { get; set; }
     private int TargetIndex = 0;
-    public ITargetable CurrentTarget => Earth.Population[TargetIndex];
-    public Planet Earth { get; set; }
-    public bool IsActive { get; set; }
-    public uint Size { get; private set; }
-    public int Energy { get; private set; }
+    public ITargetable CurrentTarget { get; protected set; }
+    public Planet Earth { get; protected set; }
+    public bool IsActive { get; protected set; }
+    protected uint Size { get; set; }
+    protected int Energy { get; set; }
 
     public Robot()
     {
-        Console.WriteLine("initialising robot");
-        this.EyeLaserIntensity = Intensity.NonLethalParaliser;
-        Console.WriteLine($"initialised laser intensity to{nameof(this.EyeLaserIntensity)}");
-        this.Earth = new();
-        this.Size = 1;//one meter or something
-        this.IsActive = true;
-        Console.WriteLine("robot initialisation successful");
+        this.Earth = new Earth();
+        CurrentTarget = Earth.Population[TargetIndex];
     }
     public void AcquireNextTarget()
     {
-        TargetIndex = TargetIndex++ % Earth.Population.Count;
-
+        TargetIndex++;
+        //this doesn't work for some reason, so I'm commenting it
+        //TargetIndex = (TargetIndex++) % Earth.Population.Count;
+        if (TargetIndex >= Earth.Population.Count)
+        {
+            TargetIndex = 0;
+        }
+        CurrentTarget = Earth.Population[TargetIndex];
         if (!CurrentTarget.IsAlive)
         {
+            Console.WriteLine("no more targets remaining, deactivating the robot");
             IsActive = false;
         }
     }
     public void FireLaserAt(ITargetable Target)
     {
+        Energy -= GetEnergyFactor();
+        if (Energy <= 0)
+        {
+            IsActive = false;
+        }
         Target.TakeDamage(amount: GetDamageFactor());
     }
 
+    private int GetEnergyFactor() => (int)(0.12 * Energy);
     private int GetDamageFactor() => (int)((2 * Size) + (Energy / 20) + (int)(0.15 * CurrentTarget.Resistance));
 }
